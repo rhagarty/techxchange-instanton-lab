@@ -185,6 +185,8 @@ To stop the running container, press `CTRL+C` in the command-line session where 
 $ oc registry login --insecure=true
 ```
 
+**JAKUB COMMENT: I DON'T THINK THE ABOVE STEP IS REQUIRED ANYMORE**
+
 ### 2. Create the "dev" namespace and set it as the default
 
 ```bash
