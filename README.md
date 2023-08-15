@@ -6,6 +6,8 @@ Note that in many of the commands listed below, we have supplied a file to perfo
 
 This lab requires you start at least one terminal session, and start the Chrome browser.
 
+**JAKUB COMMENT: MIGHT BE WORTH LETTING THE USERS KNOW HERE THAT THEY ARE BEING PROVIDED WITH A NUMBER OF DIFFERENT SCRIPTS**
+
 ## Initial lab setup
 
 ### 1. Login as root
@@ -21,7 +23,7 @@ Use password: `1l0veibmrh`
 ### 2. Clone the application from GitHub
 
 ```bash
-$ cd Lab-InstantOn
+$ cd Lab-InstantOn # Does this dir already exist that users can cd into it? Or should they create it first?
 $ git clone https://github.com/rhagarty/techxchange-instanton-lab.git
 $ cd techxchange-instanton-lab/finish
 ```
@@ -51,7 +53,7 @@ Press `Display Token` and copy the top command and paste it into your terminal w
 First ensure that you are in the right directory, then package the application.
 
 ```bash
-$ cd Lab-InstantOn/techxchange-instanton-lab/finish
+$ cd Lab-InstantOn/techxchange-instanton-lab/finish # The users are already inside Lab-InstantOn as we told them to cd into it in step 1
 $ mvn package
 ```
 
@@ -89,9 +91,13 @@ $ sudo podman run --name getting-started --rm -p 9080:9080 dev.local/getting-sta
 
 Note the amount of time Open Liberty takes to report it has started (typically 3-5 seconds).
 
+**JAKUB COMMENT: GIVE A USER AN EXAMPLE OF THE "DefaultServer is ready to run a smarter planet"**
+
 Check out the application by pointing your browser at http://localhost:9080/dev. 
 
-To stop the running container, press `CTRL+C` in the command-line session where you ran the podman run command.
+To stop the running container, press `CTRL+C` in the command-line session where you ran the `podman run` command.
+
+**JAKUB COMMENT: MAKE THE PODMAN RUN ABOVE A INLINE CODEBLOCK**
 
 ### 4. Update the Dockerfile to use InstantOn
 
@@ -133,6 +139,8 @@ $ sudo podman build \
 
 > **IMPORTANT**: We need to add several Docker capabilies to allow the image to be built.
 
+**JAKUB COMMENT: ARE THEY DOCKER CAPABILITIES?**
+
 You should see the following in the build output:
 
 ```bash
@@ -162,6 +170,8 @@ $ podman run \
 > **IMPORTANT**: We need to add several Docker capabilies and security options so that the container has the correct privileges when running.
 
 Note the startup time and compare to the version without InstantOn. You should see a startup time in the 300 millisecond range - a 10x improvement!
+
+**JAKUB COMMENT: GIVE A USER AN EXAMPLE OF THE "DefaultServer is ready to run a smarter planet"**
 
 Check out the application by pointing your browser at http://localhost:9080/dev. 
 
