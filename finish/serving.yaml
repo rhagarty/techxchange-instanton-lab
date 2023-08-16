@@ -1,5 +1,10 @@
 apiVersion: operator.knative.dev/v1beta1
 kind: KnativeServing
 metadata:
-  name: knative-serving
-  namespace: knative-serving
+    name: knative-serving
+    namespace: knative-serving
+spec:
+  config:
+    autoscaler:
+      scale-to-zero-grace-period: "30s"
+      scale-to-zero-pod-retention-period: "0s"

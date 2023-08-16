@@ -4,13 +4,19 @@ In this lab, you will get to build a simple Open Liberty application and run it 
 
 Note that in many of the commands listed below, we have supplied a file to perform the command. You can either choose to type the commands yourself or simply run the script.
 
-This lab requires you start at least one terminal session, and start the Chrome browser.
+This lab requires you start at least one terminal session, and start the Firefox browser.
 
-**JAKUB COMMENT: MIGHT BE WORTH LETTING THE USERS KNOW HERE THAT THEY ARE BEING PROVIDED WITH A NUMBER OF DIFFERENT SCRIPTS**
+# Steps:
 
-## Initial lab setup
+1. [Initial lab setup](#1-initial-lab-setup)
+1. [Build and run the application locally](#2-build-and-run-the-application-locally)
+1. [Push the images to the OpenShift registry](#3-push-the-images-to-the-openshift-registry)
+1. [Setup the OpenShift Cloud Platform (OCP) environment](#4-setup-the-openshift-cloud-platform-ocp-environment)
+1. [Deploy the applications to OCP](#5-deploy-the-applications-to-ocp)
 
-### 1. Login as root
+## 1. Initial lab setup
+
+### Login as root
 
 From the terminal, login as root:
 
@@ -20,7 +26,7 @@ $ su
 
 Use password: `1l0veibmrh`
 
-### 2. Clone the application from GitHub
+### Clone the application from GitHub
 
 ```bash
 $ cd Lab-InstantOn # Does this dir already exist that users can cd into it? Or should they create it first?
@@ -28,7 +34,7 @@ $ git clone https://github.com/rhagarty/techxchange-instanton-lab.git
 $ cd techxchange-instanton-lab/finish
 ```
 
-### 3. Login to the OpenShift console, using the following URL:
+### Login to the OpenShift console, using the following URL:
 
 ```bash
 https://console-openshift-console.apps.ocp.ibm.edu
@@ -36,70 +42,74 @@ https://console-openshift-console.apps.ocp.ibm.edu
 
 Use username: `ocadmin` and password: `ibmrhocp`
 
-### 4. Login to the OpenShift CLI
+### Login to the OpenShift CLI
 
 From the OpenShift console UI, click the username in the top right corner, and select `Copy login command`.
 
-<TODO: add image>
+![ocp-cli-login](images/ocp-cli-login.png)
 
-Press `Display Token` and copy the top command and paste it into your terminal window. You should receive a confirmation message that your are logged in.
+Press `Display Token` and copy the top command.
 
-<TODO: add image>
+![ocp-cli-token](images/ocp-cli-token.png)
 
-## Build and run the application locally
+Paste the command into your terminal window. You should receive a confirmation message that you are logged in.
 
-### 1. Package the application
+## 2. Build and run the application locally
 
-First ensure that you are in the right directory, then package the application.
+### Package the application
+
+First ensure that you are in the `Lab-InstantOn/techxchange-instanton-lab/finish` directory, then run `mvn package` to build the application.
 
 ```bash
-$ cd Lab-InstantOn/techxchange-instanton-lab/finish # The users are already inside Lab-InstantOn as we told them to cd into it in step 1
 $ mvn package
 ```
 
-### 2. Build the application image
+### Build the application image
+
+Run the provided script:
 
 ```bash
 $ ./build-local-without-instanton.sh
 ```
 
-OR
+Or type the following command:
 
 ```bash
-$ sudo podman build -t dev.local/getting-started .
+$ podman build -t dev.local/getting-started .
 ```
-
-<TODO: Need sudo???>
-
 
 > **NOTE**: The Dockerfile is using a slim version of the Java 17 Open Liberty UBI.
 > 
 > `FROM icr.io/appcafe/open-liberty:kernel-slim-java17-openj9-ubi`
 > 
 
-### 3. Run the application in a container
+### Run the application in a container
+
+Run the provided script:
 
 ```bash
 $ ./run-local-without-instanton.sh
 ```
 
-OR 
+Or type the following command: 
 
 ```bash
-$ sudo podman run --name getting-started --rm -p 9080:9080 dev.local/getting-started
+$ podman run --name getting-started --rm -p 9080:9080 dev.local/getting-started
+```
+
+When the application is ready, you will see the following message:
+
+```bash
+[INFO] [AUDIT] CWWKF0011I: The server defaultServer is ready to run a smarter planet.
 ```
 
 Note the amount of time Open Liberty takes to report it has started (typically 3-5 seconds).
-
-**JAKUB COMMENT: GIVE A USER AN EXAMPLE OF THE "DefaultServer is ready to run a smarter planet"**
 
 Check out the application by pointing your browser at http://localhost:9080/dev. 
 
 To stop the running container, press `CTRL+C` in the command-line session where you ran the `podman run` command.
 
-**JAKUB COMMENT: MAKE THE PODMAN RUN ABOVE A INLINE CODEBLOCK**
-
-### 4. Update the Dockerfile to use InstantOn
+### Update the Dockerfile to use InstantOn
 
 In order to convert this image to use InstantOn, modify the Dockerfile by adding the following line to the bottom of the file. 
 
@@ -114,22 +124,25 @@ This command will perform the following actions:
 
 Note that there are 2 checkpoint options:
 
-`beforeAppStart`: Perform a checkpoint is after inspecting the application and parsing the application annotations, metadata, etc, but BEFORE any application code is run.  
+`beforeAppStart`: Perform a checkpoint after inspecting the application and parsing the application annotations, metadata, etc, but BEFORE any application code is run.  
 
 `afterAppStart`: Perform a checkpoint after running any application code that has to run before the JVM can report that the app has started and is ready to receive requests. This checkpoint is inappropriate if your application start code does any of the following:
 * Accessing a remote resource, such as a database
 * Reading configuration that is expected to change when the application is deployed
 * Starting a transaction
 
-### 5. Build the application image with the InstantOn checkpoint
+### Build the application image with the InstantOn checkpoint
+
+Run the provided script:
 
 ```bash
 $ ./build-local-with-instanton.sh
 ```
-OR 
+
+Or type the following command: 
 
 ```bash
-$ sudo podman build \
+$ podman build \
    -t dev.local/getting-started-instanton \
    --cap-add=CHECKPOINT_RESTORE \
    --cap-add=SYS_PTRACE\
@@ -137,9 +150,7 @@ $ sudo podman build \
    --security-opt seccomp=unconfined .
 ```
 
-> **IMPORTANT**: We need to add several Docker capabilies to allow the image to be built.
-
-**JAKUB COMMENT: ARE THEY DOCKER CAPABILITIES?**
+> **IMPORTANT**: We need to add several Linux capabilies that are required when the checkpoint image is built.
 
 You should see the following in the build output:
 
@@ -149,13 +160,15 @@ Performing checkpoint --at=afterAppStart
 ...
 ```
 
-### 6. Run the InstantOn application in a container
+### Run the InstantOn application in a container
+
+Run the provided script:
 
 ```bash
 $ ./run-local-with-instanton.sh
 ```
 
-OR 
+Or type the following command: 
 
 ```bash
 $ podman run \
@@ -167,40 +180,36 @@ $ podman run \
   dev.local/getting-started-instanton
 ```
 
-> **IMPORTANT**: We need to add several Docker capabilies and security options so that the container has the correct privileges when running.
+> **IMPORTANT**: We need to add several Linux capabilies and security options so that the container has the correct privileges when running.
+
+When the application is ready, you will see the following message:
+
+```bash
+[INFO] [AUDIT] CWWKF0011I: The server defaultServer is ready to run a smarter planet.
+```
 
 Note the startup time and compare to the version without InstantOn. You should see a startup time in the 300 millisecond range - a 10x improvement!
-
-**JAKUB COMMENT: GIVE A USER AN EXAMPLE OF THE "DefaultServer is ready to run a smarter planet"**
 
 Check out the application by pointing your browser at http://localhost:9080/dev. 
 
 To stop the running container, press `CTRL+C` in the command-line session where you ran the podman run command.
 
-## Push the images to the OpenShift registry
+## 3. Push the images to the OpenShift registry
 
-### 1. Login to the OpenShift registry
-
-```bash
-$ oc registry login --insecure=true
-```
-
-**JAKUB COMMENT: I DON'T THINK THE ABOVE STEP IS REQUIRED ANYMORE**
-
-### 2. Create the "dev" namespace and set it as the default
+### Create the "dev" namespace and set it as the default
 
 ```bash
 $ kubectl create ns dev
 $ kubectl config set-context --current --namespace=dev
 ```
 
-### 3. Enable the default registry route in OpenShift to push images to its internal repos
+### Enable the default registry route in OpenShift to push images to its internal repos
 
 ```bash
 $ oc patch configs.imageregistry.operator.openshift.io/cluster --patch '{"spec":{"defaultRoute":true}}' --type=merge
 ```
 
-### 4. Login to the OpenShift registry
+### Login to the OpenShift registry
 
 First we need to get the `TOKEN` that we can use to get the password for the registry.
 
@@ -226,9 +235,9 @@ Finally, we have the values needed to login to the OpenShift registry.
 $ podman login -p $OCP_REGISTRY_PASSWORD -u kubeadmin $OCP_REGISTRY_HOST --tls-verify=false
 ```
 
-### 5. Tag and push our 2 application images to the OpenShift registry
+### Tag and push your 2 application images to the OpenShift registry
 
-Use `podman images` to verify our 2 local images:
+Use `podman images` to verify your 2 local images:
 
 
 Now tag and push them to the OpenShift registry:
@@ -243,15 +252,15 @@ $ podman tag dev.local/getting-started-instanton:latest $(oc registry info)/$(oc
 $ podman push $(oc registry info)/$(oc project -q)/getting-started-instanton:1.0-SNAPSHOT --tls-verify=false
 ```
 
-### 6. Verify the images have been pushed to the OpenShift image repository
+### Verify the images have been pushed to the OpenShift image repository
 
 ```bash
 $ oc get imagestream
 ```
 
-## Setup the OpenShift Cloud Platform (OCP) environment
+## 4. Setup the OpenShift Cloud Platform (OCP) environment
 
-### 1. Install the Liberty Operator
+### Install the Liberty Operator
 
 The Liberty Operator provides resources and configurations that make it easier to run Open Liberty applications in OCP services, such as Kubernetes and Knative.
 
@@ -259,7 +268,7 @@ The Liberty Operator provides resources and configurations that make it easier t
 $ kubectl apply --server-side -f https://raw.githubusercontent.com/OpenLiberty/open-liberty-operator/main/deploy/releases/1.2.1/kubectl/openliberty-app-crd.yaml
 ```
 
-### 2. Apply the Liberty Operator to our namespace
+### Apply the Liberty Operator to your namespace
 
 ```bash
 $ OPERATOR_NAMESPACE=dev
@@ -269,13 +278,13 @@ curl -L https://raw.githubusercontent.com/OpenLiberty/open-liberty-operator/main
       | kubectl apply -n ${OPERATOR_NAMESPACE} -f -
 ```
 
-### 3. Install the Cert Manager 
+### Install the Cert Manager 
 
 ```bash
 $ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.12.3/cert-manager.yaml
 ```
 
-### 4. Apply the OpenShift serverless operator
+### Apply the OpenShift serverless operator
 
 This command requires the file `serverless-substriction.yaml`, which is provided in this repo.
 
@@ -289,13 +298,13 @@ Use the following command to determine when the service is successful.
 $ oc get csv
 ```
 
-### 5. Verify the Knative service is ready
+### Verify the Knative service is ready
 
 ```bash
 $ oc get knativeserving.operator.knative.dev/knative-serving -n knative-serving --template='{{range .status.conditions}}{{printf "%s=%s\n" .type .status}}{{end}}'
 ```
 
-### 6. Edit the Knative permissions to allow to add Capabilities
+### Edit the Knative permissions to allow to add Capabilities
 
 ```bash
 $ kubectl -n knative-serving edit cm config-features -oyaml
@@ -308,7 +317,7 @@ kubernetes.containerspec-addcapabilities: enabled
 
 > **IMPORTANT**: to save your change and exit the file, hit the escape key, then type `:x`. 
 
-### 7. Run the following commands to give our application the correct Service Account and Security Context Contraint to run instantOn
+### Run the following commands to give your application the correct Service Account and Security Context Contraint to run instantOn
 
 ```bash
 $ oc create serviceaccount instanton-sa
@@ -316,15 +325,15 @@ $ oc apply -f scc-cap-cr.yaml
 $ oc adm policy add-scc-to-user cap-cr-scc -z instanton-sa
 ```
 
-## Deploy the applications to OCP
+## 5. Deploy the applications to OCP
 
-### 1. Deploy the base application
+### Deploy the base application
 
 ```bash
 $ kubectl apply -f deploy-without-instanton.yaml
 ```
 
-### 2. Monitor the base application
+### Monitor the base application
 
 ```bash
 $ kubectl get pods
@@ -336,11 +345,22 @@ Once the pod is running and displays a `POD NAME`, quickly take a look at the po
 $ kubectl logs <POD NAME>
 ```
 
-> **NOTE**: Knative will stop the pod does not receive a request in specified time frame, which is set in a configuration yaml file. For our lab, the settings are in <FILE NAME>, and set to 20 seconds.
+> **NOTE**: Knative will stop the pod does not receive a request in specified time frame, which is set in a configuration yaml file. For this lab, the settings are in the `serving.yaml` file, and currently set to 30 seconds (as shown below).
 
-<TODO: SHOW FILE>
+```bash
+apiVersion: operator.knative.dev/v1beta1
+kind: KnativeServing
+metadata:
+    name: knative-serving
+    namespace: knative-serving
+spec:
+  config:
+    autoscaler:
+      scale-to-zero-grace-period: "30s"
+      scale-to-zero-pod-retention-period: "0s"
+```
 
-### 3. Deploy the application with InstantOn
+### Deploy the application with InstantOn
 
 ```bash
 $ kubectl apply -f deploy-with-instanton.yaml
@@ -350,7 +370,7 @@ Use the same commands as above to monitor the application.
 
 Compare the start times of both applications and note how the InstantOn version again starts around 10x faster.
 
-### 4. Verify the applications are running
+### Verify the applications are running
 
 To get the URL for the deployed applications, use the following command:
 
@@ -360,13 +380,15 @@ $ kubectl get ksvc
 
 Check out each of the applications by pointing your browser at the listed URL.
 
-### 5. Visually test how long an idle application takes to re-start
+### Visually test how long an idle application takes to re-start
 
 As a visual test, do not click or refresh either application running in the browser for over 20 seconds. This will cause the knative service to stop the associated pod.
 
 Now, one application at a time, click the refresh button on the application page to see how long it takes to refresh the content.
 
-### 6. (OPTIONAL) Stop and delete the deployed applications
+>**NOTE**: Knative itself can take several seconds to load from a cold start. Take this into account when determininig how long it takes for the application to refresh.
+
+### (OPTIONAL) Stop and delete the deployed applications
 
 ```bash
 $ kubectl delete -f deploy-without-instanton.yaml
