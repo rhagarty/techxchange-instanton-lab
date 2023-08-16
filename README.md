@@ -192,7 +192,7 @@ Note the startup time and compare to the version without InstantOn. You should s
 
 Check out the application by pointing your browser at http://localhost:9080/dev. 
 
-To stop the running container, press `CTRL+C` in the command-line session where you ran the podman run command.
+To stop the running container, press `CTRL+C` in the command-line session where you ran the `podman run` command.
 
 ## 3. Push the images to the OpenShift registry
 
