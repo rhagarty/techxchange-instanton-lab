@@ -1,6 +1,10 @@
 # Hands-on Open Liberty InstantOn Lab
 
-In this lab, you will get to build a simple Open Liberty application and run it in a container, which you will then get to deploy in multiple ways.
+In this lab, you will get to build a simple Open Liberty application and run it in a container, which you will then get to deploy in multiple ways - locally and on Kubernetes.
+
+The application will be run in 2 modes: standard and with InstantOn. You will get to verify the significant improvement in start time that InstantOn provides.
+
+This lab will take you through the steps required to build InstantOn images, as well as how to deploy images onto the OpenShift Cloud Platform.
 
 Note that in many of the commands listed below, we have supplied a file to perform the command. You can either choose to type the commands yourself or simply run the script.
 
@@ -11,7 +15,7 @@ This lab requires you start at least one terminal session, and start the Firefox
 1. [Initial lab setup](#1-initial-lab-setup)
 1. [Build and run the application locally](#2-build-and-run-the-application-locally)
 1. [Push the images to the OpenShift registry](#3-push-the-images-to-the-openshift-registry)
-1. [Setup the OpenShift Cloud Platform (OCP) environment](#4-setup-the-openshift-cloud-platform-ocp-environment)
+1. [Enhance the OpenShift Cloud Platform (OCP) environment](#4-enhance-the-openshift-cloud-platform-ocp-environment)
 1. [Deploy the applications to OCP](#5-deploy-the-applications-to-ocp)
 
 ## 1. Initial lab setup
@@ -29,7 +33,7 @@ Use password: `1l0veibmrh`
 ### Clone the application from GitHub
 
 ```bash
-$ cd Lab-InstantOn # Does this dir already exist that users can cd into it? Or should they create it first?
+$ cd Lab-InstantOn
 $ git clone https://github.com/rhagarty/techxchange-instanton-lab.git
 $ cd techxchange-instanton-lab/finish
 ```
@@ -48,7 +52,7 @@ From the OpenShift console UI, click the username in the top right corner, and s
 
 ![ocp-cli-login](images/ocp-cli-login.png)
 
-Press `Display Token` and copy the top command.
+Press `Display Token` and copy the `Log in with this token` command.
 
 ![ocp-cli-token](images/ocp-cli-token.png)
 
@@ -111,7 +115,7 @@ To stop the running container, press `CTRL+C` in the command-line session where 
 
 ### Update the Dockerfile to use InstantOn
 
-In order to convert this image to use InstantOn, modify the Dockerfile by adding the following line to the bottom of the file. 
+In order to convert this image to use InstantOn, modify the `Dockerfile` by adding the following line to the bottom of the file. 
 
 ```bash
 RUN checkpoint.sh afterAppStart
@@ -237,8 +241,10 @@ $ podman login -p $OCP_REGISTRY_PASSWORD -u kubeadmin $OCP_REGISTRY_HOST --tls-v
 
 ### Tag and push your 2 application images to the OpenShift registry
 
-Use `podman images` to verify your 2 local images:
+Use `podman images` to verify your 2 local images. The image names should be:
 
+* dev.local/getting-started
+* dev.local/getting-started-instanton
 
 Now tag and push them to the OpenShift registry:
 
@@ -258,11 +264,13 @@ $ podman push $(oc registry info)/$(oc project -q)/getting-started-instanton:1.0
 $ oc get imagestream
 ```
 
-## 4. Setup the OpenShift Cloud Platform (OCP) environment
+## 4. Enhance the OpenShift Cloud Platform (OCP) environment
+
+Perform the following steps to enhance OCP to better manage OCP services, such as Knative, which provides serverless or scale-to-zero functionality. 
 
 ### Install the Liberty Operator
 
-The Liberty Operator provides resources and configurations that make it easier to run Open Liberty applications in OCP services, such as Kubernetes and Knative.
+The Liberty Operator provides resources and configurations that make it easier to run Open Liberty applications on OCP.
 
 ```bash
 $ kubectl apply --server-side -f https://raw.githubusercontent.com/OpenLiberty/open-liberty-operator/main/deploy/releases/1.2.1/kubectl/openliberty-app-crd.yaml
@@ -280,23 +288,27 @@ curl -L https://raw.githubusercontent.com/OpenLiberty/open-liberty-operator/main
 
 ### Install the Cert Manager 
 
+The Cert Manager adds certifications and certification issuers as resource types to Kubernetes
+
 ```bash
 $ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.12.3/cert-manager.yaml
 ```
 
-### Apply the OpenShift serverless operator
-
-This command requires the file `serverless-substriction.yaml`, which is provided in this repo.
-
-```bash
-$ oc apply -f serverless-subscription.yaml
-```
-
-Use the following command to determine when the service is successful.
+### Verify the OpenShift serverless operator is installed and ready
 
 ```bash
 $ oc get csv
 ```
+
+You should see the following output:
+
+![ocp-serverless](images/ocp-serverless.png)
+
+> **IMPORTANT**: If the OpenShift serverless operator is not installed, type the following command (note that this command requires the file `serverless-substriction.yaml`, which is provided in this repo):
+>
+>```bash
+>  $ oc apply -f serverless-subscription.yaml
+>```
 
 ### Verify the Knative service is ready
 
@@ -304,20 +316,24 @@ $ oc get csv
 $ oc get knativeserving.operator.knative.dev/knative-serving -n knative-serving --template='{{range .status.conditions}}{{printf "%s=%s\n" .type .status}}{{end}}'
 ```
 
-### Edit the Knative permissions to allow to add Capabilities
+Your output should match the following:
+
+![ocp-knative](images/ocp-knative.png)
+
+### Edit the Knative permissions to allow to the ability to add Capabilities
 
 ```bash
 $ kubectl -n knative-serving edit cm config-features -oyaml
 ```
 
 Add in the following line just bellow the “data” tag at the top:
-```bash
+```yaml
 kubernetes.containerspec-addcapabilities: enabled
 ```
 
 > **IMPORTANT**: to save your change and exit the file, hit the escape key, then type `:x`. 
 
-### Run the following commands to give your application the correct Service Account and Security Context Contraint to run instantOn
+### Run the following commands to give your application the correct Service Account (SA) and Security Context Contraint (SCC) to run instantOn
 
 ```bash
 $ oc create serviceaccount instanton-sa
@@ -345,7 +361,7 @@ Once the pod is running and displays a `POD NAME`, quickly take a look at the po
 $ kubectl logs <POD NAME>
 ```
 
-> **NOTE**: Knative will stop the pod does not receive a request in specified time frame, which is set in a configuration yaml file. For this lab, the settings are in the `serving.yaml` file, and currently set to 30 seconds (as shown below).
+> **NOTE**: Knative will stop the pod if it does not receive a request in the specified time frame, which is set in a configuration yaml file. For this lab, the settings are in the `serving.yaml` file, and currently set to 30 seconds (as shown below).
 
 ```bash
 apiVersion: operator.knative.dev/v1beta1
@@ -366,7 +382,7 @@ spec:
 $ kubectl apply -f deploy-with-instanton.yaml
 ```
 
-Use the same commands as above to monitor the application.
+Use the same `kubectl pods` and `kubeclt logs` commands as above to monitor the application.
 
 Compare the start times of both applications and note how the InstantOn version again starts around 10x faster.
 
