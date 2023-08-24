@@ -46,7 +46,9 @@ https://console-openshift-console.apps.ocp.ibm.edu
 
 Use username: `ocadmin` and password: `ibmrhocp`
 
-### Login to the OpenShift CLI
+### Login to the OpenShift CLI [IF NEEDED]
+
+> **NOTE**: Use `oc whoami` to determine if you are already logged in to the CLI as `ocadmin`.
 
 From the OpenShift console UI, click the username in the top right corner, and select `Copy login command`.
 
@@ -192,6 +194,8 @@ When the application is ready, you will see the following message:
 [INFO] [AUDIT] CWWKF0011I: The server defaultServer is ready to run a smarter planet.
 ```
 
+> **NOTE**: see [Troubleshooting](#troubleshooting) section if you run into an error.
+> 
 Note the startup time and compare to the version without InstantOn. You should see a startup time in the 300 millisecond range - a 10x improvement!
 
 Check out the application by pointing your browser at http://localhost:9080/dev. 
@@ -213,7 +217,7 @@ kubectl config set-context --current --namespace=dev
 oc patch configs.imageregistry.operator.openshift.io/cluster --patch '{"spec":{"defaultRoute":true}}' --type=merge
 ```
 
-### Login to the OpenShift registry
+### Log Podman into the OpenShift registry server
 
 First we need to get the `TOKEN` that we can use to get the password for the registry.
 
@@ -233,7 +237,7 @@ Now set the OpenShift registry host value.
 export OCP_REGISTRY_HOST=$(oc get route default-route -n openshift-image-registry --template='{{ .spec.host }}')
 ```
 
-Finally, we have the values needed to login to the OpenShift registry.
+Finally, we have the values needed for podman to login into the OpenShift registry server.
 
 ```bash
 podman login -p $OCP_REGISTRY_PASSWORD -u kubeadmin $OCP_REGISTRY_HOST --tls-verify=false
@@ -387,7 +391,7 @@ Use the same `kubectl pods` and `kubeclt logs` commands as above to monitor the 
 
 Compare the start times of both applications and note how the InstantOn version again starts around 10x faster.
 
-### Verify the applications are running
+### Verify the applications running in the browser
 
 To get the URL for the deployed applications, use the following command:
 
