@@ -387,7 +387,7 @@ spec:
 kubectl apply -f deploy-with-instanton.yaml
 ```
 
-Use the same `kubectl pods` and `kubeclt logs` commands as above to monitor the application.
+Use the same `kubectl get pods` and `kubeclt logs` commands as above to monitor the application.
 
 Compare the start times of both applications and note how the InstantOn version again starts around 10x faster.
 
@@ -403,7 +403,9 @@ Check out each of the applications by pointing your browser at the listed URL.
 
 ### Visually test how long an idle application takes to re-start
 
-As a visual test, do not click or refresh either application running in the browser for over 20 seconds. This will cause the knative service to stop the associated pod.
+As a visual test, do not click or refresh either application running in the browser for over 30 seconds. This will cause the knative service to stop the associated pod.
+
+Use the `kubeclt get pods` command to verify that both application pods are no longer running.
 
 Now, one application at a time, click the refresh button on the application page to see how long it takes to refresh the content.
 
