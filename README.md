@@ -25,7 +25,7 @@ This lab requires you start at least one terminal session, and start the Firefox
 From the terminal, login as root:
 
 ```bash
-$ su
+su
 ```
 
 Use password: `1l0veibmrh`
@@ -33,9 +33,9 @@ Use password: `1l0veibmrh`
 ### Clone the application from GitHub
 
 ```bash
-$ cd Lab-InstantOn
-$ git clone https://github.com/rhagarty/techxchange-instanton-lab.git
-$ cd techxchange-instanton-lab/finish
+cd Lab-InstantOn
+git clone https://github.com/rhagarty/techxchange-instanton-lab.git
+cd techxchange-instanton-lab/finish
 ```
 
 ### Login to the OpenShift console, using the following URL:
@@ -65,7 +65,7 @@ Paste the command into your terminal window. You should receive a confirmation m
 First ensure that you are in the `Lab-InstantOn/techxchange-instanton-lab/finish` directory, then run `mvn package` to build the application.
 
 ```bash
-$ mvn package
+mvn package
 ```
 
 ### Build the application image
@@ -73,13 +73,13 @@ $ mvn package
 Run the provided script:
 
 ```bash
-$ ./build-local-without-instanton.sh
+./build-local-without-instanton.sh
 ```
 
 Or type the following command:
 
 ```bash
-$ podman build -t dev.local/getting-started .
+podman build -t dev.local/getting-started .
 ```
 
 > **NOTE**: The Dockerfile is using a slim version of the Java 17 Open Liberty UBI.
@@ -92,13 +92,13 @@ $ podman build -t dev.local/getting-started .
 Run the provided script:
 
 ```bash
-$ ./run-local-without-instanton.sh
+./run-local-without-instanton.sh
 ```
 
 Or type the following command: 
 
 ```bash
-$ podman run --name getting-started --rm -p 9080:9080 dev.local/getting-started
+podman run --name getting-started --rm -p 9080:9080 dev.local/getting-started
 ```
 
 When the application is ready, you will see the following message:
@@ -140,18 +140,18 @@ Note that there are 2 checkpoint options:
 Run the provided script:
 
 ```bash
-$ ./build-local-with-instanton.sh
+./build-local-with-instanton.sh
 ```
 
 Or type the following command: 
 
 ```bash
-$ podman build \
-   -t dev.local/getting-started-instanton \
-   --cap-add=CHECKPOINT_RESTORE \
-   --cap-add=SYS_PTRACE\
-   --cap-add=SETPCAP \
-   --security-opt seccomp=unconfined .
+podman build \
+  -t dev.local/getting-started-instanton \
+  --cap-add=CHECKPOINT_RESTORE \
+  --cap-add=SYS_PTRACE\
+  --cap-add=SETPCAP \
+  --security-opt seccomp=unconfined .
 ```
 
 > **IMPORTANT**: We need to add several Linux capabilies that are required when the checkpoint image is built.
@@ -169,19 +169,19 @@ Performing checkpoint --at=afterAppStart
 Run the provided script:
 
 ```bash
-$ ./run-local-with-instanton.sh
+./run-local-with-instanton.sh
 ```
 
 Or type the following command: 
 
 ```bash
-$ podman run \
-  --rm \
-  --cap-add=CHECKPOINT_RESTORE \
-  --cap-add=SETPCAP \
-  --security-opt seccomp=unconfined \
-  -p 9080:9080 \
-  dev.local/getting-started-instanton
+podman run \
+ --rm \
+ --cap-add=CHECKPOINT_RESTORE \
+ --cap-add=SETPCAP \
+ --security-opt seccomp=unconfined \
+ -p 9080:9080 \
+ dev.local/getting-started-instanton
 ```
 
 > **IMPORTANT**: We need to add several Linux capabilies and security options so that the container has the correct privileges when running.
@@ -203,14 +203,14 @@ To stop the running container, press `CTRL+C` in the command-line session where 
 ### Create the "dev" namespace and set it as the default
 
 ```bash
-$ kubectl create ns dev
-$ kubectl config set-context --current --namespace=dev
+kubectl create ns dev
+kubectl config set-context --current --namespace=dev
 ```
 
 ### Enable the default registry route in OpenShift to push images to its internal repos
 
 ```bash
-$ oc patch configs.imageregistry.operator.openshift.io/cluster --patch '{"spec":{"defaultRoute":true}}' --type=merge
+oc patch configs.imageregistry.operator.openshift.io/cluster --patch '{"spec":{"defaultRoute":true}}' --type=merge
 ```
 
 ### Login to the OpenShift registry
@@ -218,25 +218,25 @@ $ oc patch configs.imageregistry.operator.openshift.io/cluster --patch '{"spec":
 First we need to get the `TOKEN` that we can use to get the password for the registry.
 
 ```bash
-$ oc get secrets -n openshift-image-registry | grep cluster-image-registry-operator-token
+oc get secrets -n openshift-image-registry | grep cluster-image-registry-operator-token
 ```
 
 Take note of the `TOKEN` value, as you need to substitute it in the following command that sets the registry password.
 
 ```bash
-$ export OCP_REGISTRY_PASSWORD=$(oc get secret -n openshift-image-registry cluster-image-registry-operator-token-<INPUT_TOKEN> -o=jsonpath='{.data.token}{"\n"}' | base64 -d)
+export OCP_REGISTRY_PASSWORD=$(oc get secret -n openshift-image-registry cluster-image-registry-operator-token-<INPUT_TOKEN> -o=jsonpath='{.data.token}{"\n"}' | base64 -d)
 ```
 
 Now set the OpenShift registry host value.
 
 ```bash
-$ export OCP_REGISTRY_HOST=$(oc get route default-route -n openshift-image-registry --template='{{ .spec.host }}')
+export OCP_REGISTRY_HOST=$(oc get route default-route -n openshift-image-registry --template='{{ .spec.host }}')
 ```
 
 Finally, we have the values needed to login to the OpenShift registry.
 
 ```bash
-$ podman login -p $OCP_REGISTRY_PASSWORD -u kubeadmin $OCP_REGISTRY_HOST --tls-verify=false
+podman login -p $OCP_REGISTRY_PASSWORD -u kubeadmin $OCP_REGISTRY_HOST --tls-verify=false
 ```
 
 ### Tag and push your 2 application images to the OpenShift registry
@@ -249,19 +249,19 @@ Use `podman images` to verify your 2 local images. The image names should be:
 Now tag and push them to the OpenShift registry:
 
 ```bash
-$ // base application image
-$ podman tag dev.local/getting-started:latest $(oc registry info)/$(oc project -q)/getting-started:1.0-SNAPSHOT
-$ podman push $(oc registry info)/$(oc project -q)/getting-started:1.0-SNAPSHOT --tls-verify=false
+# base application image
+podman tag dev.local/getting-started:latest $(oc registry info)/$(oc project -q)/getting-started:1.0-SNAPSHOT
+podman push $(oc registry info)/$(oc project -q)/getting-started:1.0-SNAPSHOT --tls-verify=false
 
-$ // InstantOn application image
-$ podman tag dev.local/getting-started-instanton:latest $(oc registry info)/$(oc project -q)/getting-started-instanton:1.0-SNAPSHOT
-$ podman push $(oc registry info)/$(oc project -q)/getting-started-instanton:1.0-SNAPSHOT --tls-verify=false
+# InstantOn application image
+podman tag dev.local/getting-started-instanton:latest $(oc registry info)/$(oc project -q)/getting-started-instanton:1.0-SNAPSHOT
+podman push $(oc registry info)/$(oc project -q)/getting-started-instanton:1.0-SNAPSHOT --tls-verify=false
 ```
 
 ### Verify the images have been pushed to the OpenShift image repository
 
 ```bash
-$ oc get imagestream
+oc get imagestream
 ```
 
 ## 4. Enhance the OpenShift Cloud Platform (OCP) environment
@@ -273,14 +273,15 @@ Perform the following steps to enhance OCP to better manage OCP services, such a
 The Liberty Operator provides resources and configurations that make it easier to run Open Liberty applications on OCP.
 
 ```bash
-$ kubectl apply --server-side -f https://raw.githubusercontent.com/OpenLiberty/open-liberty-operator/main/deploy/releases/1.2.1/kubectl/openliberty-app-crd.yaml
+kubectl apply --server-side -f https://raw.githubusercontent.com/OpenLiberty/open-liberty-operator/main/deploy/releases/1.2.1/kubectl/openliberty-app-crd.yaml
 ```
 
 ### Apply the Liberty Operator to your namespace
 
 ```bash
-$ OPERATOR_NAMESPACE=dev
-$ WATCH_NAMESPACE=dev
+OPERATOR_NAMESPACE=dev
+WATCH_NAMESPACE=dev
+##
 curl -L https://raw.githubusercontent.com/OpenLiberty/open-liberty-operator/main/deploy/releases/1.2.0/kubectl/openliberty-app-operator.yaml \
       | sed -e "s/OPEN_LIBERTY_WATCH_NAMESPACE/${WATCH_NAMESPACE}/" \
       | kubectl apply -n ${OPERATOR_NAMESPACE} -f -
@@ -291,13 +292,13 @@ curl -L https://raw.githubusercontent.com/OpenLiberty/open-liberty-operator/main
 The Cert Manager adds certifications and certification issuers as resource types to Kubernetes
 
 ```bash
-$ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.12.3/cert-manager.yaml
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.12.3/cert-manager.yaml
 ```
 
 ### Verify the OpenShift serverless operator is installed and ready
 
 ```bash
-$ oc get csv
+oc get csv
 ```
 
 You should see the following output:
@@ -307,13 +308,13 @@ You should see the following output:
 > **IMPORTANT**: If the OpenShift serverless operator is not installed, type the following command (note that this command requires the file `serverless-substriction.yaml`, which is provided in this repo):
 >
 >```bash
->  $ oc apply -f serverless-subscription.yaml
+>  oc apply -f serverless-subscription.yaml
 >```
 
 ### Verify the Knative service is ready
 
 ```bash
-$ oc get knativeserving.operator.knative.dev/knative-serving -n knative-serving --template='{{range .status.conditions}}{{printf "%s=%s\n" .type .status}}{{end}}'
+oc get knativeserving.operator.knative.dev/knative-serving -n knative-serving --template='{{range .status.conditions}}{{printf "%s=%s\n" .type .status}}{{end}}'
 ```
 
 Your output should match the following:
@@ -323,7 +324,7 @@ Your output should match the following:
 ### Edit the Knative permissions to allow to the ability to add Capabilities
 
 ```bash
-$ kubectl -n knative-serving edit cm config-features -oyaml
+kubectl -n knative-serving edit cm config-features -oyaml
 ```
 
 Add in the following line just bellow the “data” tag at the top:
@@ -336,9 +337,9 @@ kubernetes.containerspec-addcapabilities: enabled
 ### Run the following commands to give your application the correct Service Account (SA) and Security Context Contraint (SCC) to run instantOn
 
 ```bash
-$ oc create serviceaccount instanton-sa
-$ oc apply -f scc-cap-cr.yaml
-$ oc adm policy add-scc-to-user cap-cr-scc -z instanton-sa
+oc create serviceaccount instanton-sa
+oc apply -f scc-cap-cr.yaml
+oc adm policy add-scc-to-user cap-cr-scc -z instanton-sa
 ```
 
 ## 5. Deploy the applications to OCP
@@ -346,19 +347,19 @@ $ oc adm policy add-scc-to-user cap-cr-scc -z instanton-sa
 ### Deploy the base application
 
 ```bash
-$ kubectl apply -f deploy-without-instanton.yaml
+kubectl apply -f deploy-without-instanton.yaml
 ```
 
 ### Monitor the base application
 
 ```bash
-$ kubectl get pods
+kubectl get pods
 ```
 
 Once the pod is running and displays a `POD NAME`, quickly take a look at the pod log to see how long the application took to start up.
 
 ```bash
-$ kubectl logs <POD NAME>
+kubectl logs <POD NAME>
 ```
 
 > **NOTE**: Knative will stop the pod if it does not receive a request in the specified time frame, which is set in a configuration yaml file. For this lab, the settings are in the `serving.yaml` file, and currently set to 30 seconds (as shown below).
@@ -379,7 +380,7 @@ spec:
 ### Deploy the application with InstantOn
 
 ```bash
-$ kubectl apply -f deploy-with-instanton.yaml
+kubectl apply -f deploy-with-instanton.yaml
 ```
 
 Use the same `kubectl pods` and `kubeclt logs` commands as above to monitor the application.
@@ -391,7 +392,7 @@ Compare the start times of both applications and note how the InstantOn version 
 To get the URL for the deployed applications, use the following command:
 
 ```bash
-$ kubectl get ksvc
+kubectl get ksvc
 ```
 
 Check out each of the applications by pointing your browser at the listed URL.
@@ -407,8 +408,8 @@ Now, one application at a time, click the refresh button on the application page
 ### (OPTIONAL) Stop and delete the deployed applications
 
 ```bash
-$ kubectl delete -f deploy-without-instanton.yaml
-$ kubectl delete -f deploy-with-instanton.yaml
+kubectl delete -f deploy-without-instanton.yaml
+kubectl delete -f deploy-with-instanton.yaml
 ```
 
 ## Troubleshooting
