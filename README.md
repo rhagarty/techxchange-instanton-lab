@@ -33,7 +33,7 @@ Use password: `1l0veibmrh`
 ### Clone the application from GitHub
 
 ```bash
-cd Lab-InstantOn
+cd /home/ibmuser/Lab-InstantOn
 git clone https://github.com/rhagarty/techxchange-instanton-lab.git
 cd techxchange-instanton-lab/finish
 ```
