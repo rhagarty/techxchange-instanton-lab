@@ -48,7 +48,7 @@ Use username: `ocadmin` and password: `ibmrhocp`
 
 ### Login to the OpenShift CLI [IF NEEDED]
 
-> **NOTE**: Use `oc whoami` to determine if you are already logged in to the CLI as `ocadmin`.
+> **NOTE**: You will not need to perform this step if you completed the Semeru Cloud Compiler lab. TO verify, you can use `oc whoami` to determine if you are already logged into the CLI as `ocadmin`.
 
 From the OpenShift console UI, click the username in the top right corner, and select `Copy login command`.
 
@@ -217,7 +217,9 @@ kubectl config set-context --current --namespace=dev
 oc patch configs.imageregistry.operator.openshift.io/cluster --patch '{"spec":{"defaultRoute":true}}' --type=merge
 ```
 
-### Log Podman into the OpenShift registry server
+### Log Podman into the OpenShift registry server [IF NEEDED]
+
+> **NOTE**: You will not need to perform this step if you completed the Semeru Cloud Compiler lab.
 
 First we need to get the `TOKEN` that we can use to get the password for the registry.
 
