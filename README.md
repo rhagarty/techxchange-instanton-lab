@@ -28,7 +28,7 @@ From the terminal, login as root:
 su
 ```
 
-Use password: `1l0veibmrh`
+Use the `root` password specified in the Lab Guide.
 
 ### Clone the application from GitHub
 
@@ -44,7 +44,7 @@ cd techxchange-instanton-lab/finish
 https://console-openshift-console.apps.ocp.ibm.edu
 ```
 
-Use username: `ocadmin` and password: `ibmrhocp`
+Use username: `ocadmin`. Use the password specified in the Lab Guide.
 
 ### Login to the OpenShift CLI [IF NEEDED]
 
