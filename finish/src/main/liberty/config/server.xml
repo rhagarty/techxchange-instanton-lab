@@ -9,7 +9,7 @@
         <!-- tag::mpHealth[] -->
         <feature>mpHealth-4.0</feature>
         <!-- end::mpHealth[] -->
-        <feature>mpConfig-3.0</feature>
+        <feature>mpConfig-3.1</feature>
     </featureManager>
     <!-- end::features[] -->
 
