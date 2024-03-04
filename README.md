@@ -94,7 +94,7 @@ podman build -t dev.local/getting-started .
 > 
 > `FROM icr.io/appcafe/open-liberty:kernel-slim-java21-openj9-ubi-minimal`
 > 
-> If you encounter any issues while executing this step, please refer to the [troubleshooting notes](#troubleshooting) provided.
+> If you encounter any issues while executing this step, please refer to the [troubleshooting notes](#error-when-building-the-application-imagewithout-instanton) provided.
 
 ### Run the application in a container
 
@@ -201,7 +201,7 @@ When the application is ready, you will see the following message:
 [INFO] [AUDIT] CWWKF0011I: The server defaultServer is ready to run a smarter planet.
 ```
 
-> **NOTE**: see [Troubleshooting](#troubleshooting) section if you run into an error.
+> **NOTE**: see [Troubleshooting](#error-when-building-the-instanton-application-image) section if you run into an error.
 > 
 Note the startup time and compare to the version without InstantOn. You should see a startup time in the 300 millisecond range - a 10x improvement!
 
@@ -334,7 +334,7 @@ Your output should match the following:
 
 ![ocp-knative](images/ocp-knative.png)
 
-> **NOTE**: If you encounter any issues while executing this step, please refer to the [troubleshooting notes](#troubleshooting) provided.
+> **NOTE**: If you encounter any issues while executing this step, please refer to the [troubleshooting notes](#error-when-verifying-the-knative-service-is-ready) provided.
 
 ### Edit the Knative permissions to allow to the ability to add Capabilities
 
@@ -347,7 +347,7 @@ Add in the following line just bellow the “data” tag at the top:
 kubernetes.containerspec-addcapabilities: enabled
 ```
 
-> **IMPORTANT**: to save your change and exit the file, hit the escape key, then type `:x`. If you received the message `Edit cancelled, no changes made.`, it may indicate that the Knative service has already been edited and the same changes applied. To confirm whether the `containerspec-addcapabilities` is enabled, you can inspect the current configuration of `config-features` by executing the command `kubectl -n knative-serving get cm config-features -oyaml`
+> **IMPORTANT**: to save your change and exit the file, hit the escape key, then type `:x`. If you received the message `Edit cancelled, no changes made`, it may indicate that the Knative service has already been edited and the same changes applied. To confirm whether the `containerspec-addcapabilities` is enabled, you can inspect the current configuration of `config-features` by executing the command `kubectl -n knative-serving get cm config-features -oyaml`
 
 ### Run the following commands to give your application the correct Service Account (SA) and Security Context Contraint (SCC) to run instantOn
 
@@ -435,20 +435,24 @@ kubectl delete -f deploy-with-instanton.yaml
 
 ## Troubleshooting
 
-If you run into the following error when building the application image(without InstantOn):
+### Error when building the application image(without InstantOn)
 
-```bash
-error running container: from /usr/bin/crun creating container for [/bin/sh -c configure.sh]: sd-bus call: Transport endpoint is not connected: Transport endpoint is not connected
-: exit status 1
-ERRO[0043] did not get container create message from subprocess: EOF 
-Error: building at STEP "RUN configure.sh": while running runtime: exit status 1
-```
+  If you run into the following error when building the application image(without InstantOn):
 
-Run the following command from your terminal window:
+  ```bash
+  error running container: from /usr/bin/crun creating container for [/bin/sh -c configure.sh]: sd-bus call: Transport endpoint is not connected: Transport endpoint is not connected
+  : exit status 1
+  ERRO[0043] did not get container create message from subprocess: EOF 
+  Error: building at STEP "RUN configure.sh": while running runtime: exit status 1
+  ```
 
-```bash
-sudo ./build-local-without-instanton.sh
-```
+  Run the following command from your terminal window:
+
+  ```bash
+  sudo ./build-local-without-instanton.sh
+  ```
+
+### Error when building the InstantOn application image
 
 If you run into the following error when building the InstantOn application image:
 
@@ -462,6 +466,8 @@ Run the following command from your terminal window:
 ```bash
 setsebool virt_sandbox_use_netlink 1
 ```
+
+### Error when verifying the Knative service is ready
 
 If you run into the following error when verifying the Knative service is ready:
 
