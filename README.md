@@ -149,6 +149,8 @@ Note that there are 2 checkpoint options:
 Run the provided script:
 
 ```bash
+setsebool virt_sandbox_use_netlink 1
+
 ./build-local-with-instanton.sh
 ```
 
@@ -201,8 +203,6 @@ When the application is ready, you will see the following message:
 [INFO] [AUDIT] CWWKF0011I: The server defaultServer is ready to run a smarter planet.
 ```
 
-> **NOTE**: see [Troubleshooting](#error-when-building-the-instanton-application-image) section if you run into an error.
-> 
 Note the startup time and compare to the version without InstantOn. You should see a startup time in the 300 millisecond range - a 10x improvement!
 
 Check out the application by pointing your browser at http://localhost:9080/dev. 
@@ -314,6 +314,8 @@ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/
 oc get csv
 ```
 
+> **NOTE**: If you encounter any issues while executing this step, please refer to the [troubleshooting notes](#error-when-verifying-the-openshift-serverless-operator-is-installed-and-ready) provided.
+
 You should see the following output:
 
 ![ocp-serverless](images/ocp-serverless.png)
@@ -330,11 +332,11 @@ You should see the following output:
 oc get knativeserving.operator.knative.dev/knative-serving -n knative-serving --template='{{range .status.conditions}}{{printf "%s=%s\n" .type .status}}{{end}}'
 ```
 
-Your output should match the following:
+If the Knative service has been setup and added to the capability, your output should match the following:
 
 ![ocp-knative](images/ocp-knative.png)
 
-> **NOTE**: If you encounter any issues while executing this step, please refer to the [troubleshooting notes](#error-when-verifying-the-knative-service-is-ready) provided.
+> **NOTE**: If the output does not match the expected output or if there are any other issues, please contact your instructor.
 
 ### Edit the Knative permissions to allow to the ability to add Capabilities
 
@@ -452,7 +454,7 @@ kubectl delete -f deploy-with-instanton.yaml
   sudo ./build-local-without-instanton.sh
   ```
 
-### Error when building the InstantOn application image
+<!-- ### Error when building the InstantOn application image
 
 If you run into the following error when building the InstantOn application image:
 
@@ -465,9 +467,9 @@ Run the following command from your terminal window:
 
 ```bash
 setsebool virt_sandbox_use_netlink 1
-```
+``` -->
 
-### Error when verifying the Knative service is ready
+<!-- ### Error when verifying the Knative service is ready
 
 If you run into the following error when verifying the Knative service is ready:
 
@@ -478,4 +480,15 @@ Error from server (NotFound): knativeservings.operator.knative.dev "knative-serv
 
 ```bash
 oc apply -f serving.yaml
+``` -->
+
+### Error when verifying the OpenShift serverless operator is installed and ready
+
+If you run into the following error when running `oc get csv `:
+
+```bash
+oc get csv
+No resources found in dev-[your initial] namespace.
 ```
+
+Please wait a few more minutes and then try again. It should return the correct output.
