@@ -2,11 +2,11 @@ apiVersion: apps.openliberty.io/v1
 kind: OpenLibertyApplication
 metadata:
   name: getting-started-instanton
-  namespace: dev-[Your initial]
+  namespace: dev
 spec:
-  applicationImage: image-registry.openshift-image-registry.svc:5000/dev-[Your initial]/getting-started-instanton:1.0-SNAPSHOT
+  applicationImage: image-registry.openshift-image-registry.svc:5000/dev/getting-started-instanton:1.0-SNAPSHOT
   pullPolicy: Always
-  serviceAccountName: instanton-sa-[Your initial]
+  serviceAccountName: instanton-sa
   createKnativeService: true
   manageTLS: false
   expose: true

@@ -213,11 +213,9 @@ To stop the running container, press `CTRL+C` in the command-line session where 
 
 ### Create the namespace and set it as the default
 
-> **NOTE**: If you are working on a cluster that is shared with others, please ensure that you are using a unique namespace. We recommend using the format `dev-` followed by your initials. For example, `dev-rm`.
-
 ```bash
-kubectl create ns dev-[Your initial]
-kubectl config set-context --current --namespace=dev-[Your initial]
+kubectl create ns dev
+kubectl config set-context --current --namespace=dev
 ```
 
 ### Enable the default registry route in OpenShift to push images to its internal repos
@@ -292,8 +290,8 @@ kubectl apply --server-side -f https://raw.githubusercontent.com/OpenLiberty/ope
 ### Apply the Liberty Operator to your namespace
 
 ```bash
-OPERATOR_NAMESPACE=dev-[Your initial]
-WATCH_NAMESPACE=dev-[Your initial]
+OPERATOR_NAMESPACE=dev
+WATCH_NAMESPACE=dev
 ##
 curl -L https://raw.githubusercontent.com/OpenLiberty/open-liberty-operator/main/deploy/releases/1.2.0/kubectl/openliberty-app-operator.yaml \
       | sed -e "s/OPEN_LIBERTY_WATCH_NAMESPACE/${WATCH_NAMESPACE}/" \
@@ -336,7 +334,7 @@ If the Knative service has been setup and added to the capability, your output s
 
 ![ocp-knative](images/ocp-knative.png)
 
-> **NOTE**: If the output does not match the expected output or if there are any other issues, please contact your instructor.
+> **NOTE**: If you encounter any issues while executing this step, please refer to the [troubleshooting notes](#error-when-verifying-the-knative-service-is-ready) provided.
 
 ### Edit the Knative permissions to allow to the ability to add Capabilities
 
@@ -354,16 +352,14 @@ kubernetes.containerspec-addcapabilities: enabled
 ### Run the following commands to give your application the correct Service Account (SA) and Security Context Contraint (SCC) to run instantOn
 
 ```bash
-oc create serviceaccount instanton-sa-[Your initial]
+oc create serviceaccount instanton-sa
 oc apply -f scc-cap-cr.yaml
-oc adm policy add-scc-to-user cap-cr-scc -z instanton-sa-[Your initial]
+oc adm policy add-scc-to-user cap-cr-scc -z instanton-sa
 ```
 
 ## 5. Deploy the applications to OCP
 
 ### Deploy the base application
-
-> **IMPORTANT**: Please ensure to fill in all `[Your initial]` fields with the namespace used in the creation step above before proceeding to apply the YAML file.
 
 ```bash
 kubectl apply -f deploy-without-instanton.yaml
@@ -397,8 +393,6 @@ spec:
 ```
 
 ### Deploy the application with InstantOn
-
-> **IMPORTANT**: Please ensure to fill in all `[Your initial]` fields with the namespace used in the creation step above before proceeding to apply the YAML file.
 
 ```bash
 kubectl apply -f deploy-with-instanton.yaml
@@ -454,22 +448,7 @@ kubectl delete -f deploy-with-instanton.yaml
   sudo ./build-local-without-instanton.sh
   ```
 
-<!-- ### Error when building the InstantOn application image
-
-If you run into the following error when building the InstantOn application image:
-
-```bash
-CWWKE0963E: The server checkpoint request failed because netlink system calls were unsuccessful. If SELinux is enabled in enforcing mode, netlink system calls might be blocked by the SELinux "virt_sandbox_use_netlink" policy setting. Either disable SELinux or enable the netlink system calls with the "setsebool virt_sandbox_use_netlink 1" command.
-Error: building at STEP "RUN checkpoint.sh afterAppStart": while running runtime: exit status 74
-```
-
-Run the following command from your terminal window:
-
-```bash
-setsebool virt_sandbox_use_netlink 1
-``` -->
-
-<!-- ### Error when verifying the Knative service is ready
+### Error when verifying the Knative service is ready
 
 If you run into the following error when verifying the Knative service is ready:
 
@@ -480,7 +459,7 @@ Error from server (NotFound): knativeservings.operator.knative.dev "knative-serv
 
 ```bash
 oc apply -f serving.yaml
-``` -->
+```
 
 ### Error when verifying the OpenShift serverless operator is installed and ready
 
@@ -488,7 +467,7 @@ If you run into the following error when running `oc get csv `:
 
 ```bash
 oc get csv
-No resources found in dev-[your initial] namespace.
+No resources found in dev namespace.
 ```
 
 Please wait a few more minutes and then try again. It should return the correct output.
