@@ -48,6 +48,11 @@ git clone https://github.com/rhagarty/techxchange-instanton-lab.git
 cd techxchange-instanton-lab/finish
 ```
 
+> **NOTE**: If you prefer to use an IDE to view the project, you can run VSCode with admin privileges using the following command: 
+> ```bash
+> sudo code --no-sandbox --user-data-dir /home/techzone
+```
+
 ### Login to the OpenShift console, using the following URL:
 
 Once OCP server VM provisioned and ready, please use the button/link provide in the reservation page to access the web console. 
@@ -318,7 +323,8 @@ You should see the following output:
 
 ![ocp-serverless](images/ocp-serverless.png)
 
-> **IMPORTANT**: If the OpenShift serverless operator is not installed, type the following command (note that this command requires the file `serverless-substriction.yaml`, which is provided in this repo):
+> **IMPORTANT**: If the OpenShift serverless operator is not installed, type the following command
+(note that this command requires the file `serverless-substriction.yaml`, which is provided in this repo):
 >
 >```bash
 >  oc apply -f serverless-subscription.yaml
@@ -334,7 +340,11 @@ If the Knative service has been setup and added to the capability, your output s
 
 ![ocp-knative](images/ocp-knative.png)
 
-> **NOTE**: If you encounter any issues while executing this step, please refer to the [troubleshooting notes](#error-when-verifying-the-knative-service-is-ready) provided.
+> **IMPORTANT**: If the Knative service is not running or terminal returns a message stating that the "knative-serving" is not found, enter the following command to start the service (note that this command requires the file `serving.yaml`, which is provided in this repo)
+>
+>```bash
+>oc apply -f serving.yaml
+>```
 
 ### Edit the Knative permissions to allow to the ability to add Capabilities
 
@@ -347,7 +357,11 @@ Add in the following line just bellow the “data” tag at the top:
 kubernetes.containerspec-addcapabilities: enabled
 ```
 
-> **IMPORTANT**: to save your change and exit the file, hit the escape key, then type `:x`. If you received the message `Edit cancelled, no changes made`, it may indicate that the Knative service has already been edited and the same changes applied. To confirm whether the `containerspec-addcapabilities` is enabled, you can inspect the current configuration of `config-features` by executing the command `kubectl -n knative-serving get cm config-features -oyaml`
+> **IMPORTANT**: to save your change and exit the file, hit the escape key, then type `:x`. If you received the message `Edit cancelled, no changes made`, it may indicate that the Knative service has already been edited and the same changes applied. To confirm whether the `containerspec-addcapabilities` is enabled, you can inspect the current configuration of `config-features` by executing the command 
+> ```bash 
+> kubectl -n knative-serving get cm config-features -oyaml | grep "kubernetes.containerspec-addcapabilities" | grep -q "enabled" && echo "true" || echo "false"
+> ```
+> If the command returns true, it indicates that the Knative 'containerspec-addcapabilities' feature is enabled.
 
 ### Run the following commands to give your application the correct Service Account (SA) and Security Context Contraint (SCC) to run instantOn
 
@@ -448,7 +462,7 @@ kubectl delete -f deploy-with-instanton.yaml
   sudo ./build-local-without-instanton.sh
   ```
 
-### Error when verifying the Knative service is ready
+<!-- ### Error when verifying the Knative service is ready
 
 If you run into the following error when verifying the Knative service is ready:
 
@@ -459,7 +473,7 @@ Error from server (NotFound): knativeservings.operator.knative.dev "knative-serv
 
 ```bash
 oc apply -f serving.yaml
-```
+``` -->
 
 ### Error when verifying the OpenShift serverless operator is installed and ready
 
