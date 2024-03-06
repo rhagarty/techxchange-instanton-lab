@@ -51,7 +51,7 @@ cd techxchange-instanton-lab/finish
 > **NOTE**: If you prefer to use an IDE to view the project, you can run VSCode with admin privileges using the following command: 
 > ```bash
 > sudo code --no-sandbox --user-data-dir /home/techzone
-```
+>```
 
 ### Login to the OpenShift console, using the following URL:
 
