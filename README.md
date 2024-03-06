@@ -48,6 +48,11 @@ git clone https://github.com/rhagarty/techxchange-instanton-lab.git
 cd techxchange-instanton-lab/finish
 ```
 
+> **NOTE**: If you prefer to use an IDE to view the project, you can run VSCode with admin privileges using the following command: 
+> ```bash
+> sudo code --no-sandbox --user-data-dir /home/techzone
+> ```
+
 ### Login to the OpenShift console, using the following URL:
 
 Once OCP server VM provisioned and ready, please use the button/link provide in the reservation page to access the web console. 
@@ -349,7 +354,11 @@ Add in the following line just bellow the “data” tag at the top:
 kubernetes.containerspec-addcapabilities: enabled
 ```
 
-> **IMPORTANT**: to save your change and exit the file, hit the escape key, then type `:x`. If you received the message `Edit cancelled, no changes made`, it may indicate that the Knative service has already been edited and the same changes applied. To confirm whether the `containerspec-addcapabilities` is enabled, you can inspect the current configuration of `config-features` by executing the command `kubectl -n knative-serving get cm config-features -oyaml`
+> **IMPORTANT**: to save your change and exit the file, hit the escape key, then type `:x`. If you received the message `Edit cancelled, no changes made`, it may indicate that the Knative service has already been edited and the same changes applied. To confirm whether the `containerspec-addcapabilities` is enabled, you can inspect the current configuration of `config-features` by executing the command 
+> ```bash 
+> kubectl -n knative-serving get cm config-features -oyaml | grep "kubernetes.containerspec-addcapabilities" | grep -q "enabled" && echo "true" || echo "false"
+> ```
+> If the command returns true, it indicates that the Knative 'containerspec-addcapabilities' feature is enabled.
 
 ### Run the following commands to give your application the correct Service Account (SA) and Security Context Contraint (SCC) to run instantOn
 
@@ -453,34 +462,6 @@ kubectl delete -f deploy-with-instanton.yaml
   ```bash
   sudo ./build-local-without-instanton.sh
   ```
-
-<!-- ### Error when building the InstantOn application image
-
-If you run into the following error when building the InstantOn application image:
-
-```bash
-CWWKE0963E: The server checkpoint request failed because netlink system calls were unsuccessful. If SELinux is enabled in enforcing mode, netlink system calls might be blocked by the SELinux "virt_sandbox_use_netlink" policy setting. Either disable SELinux or enable the netlink system calls with the "setsebool virt_sandbox_use_netlink 1" command.
-Error: building at STEP "RUN checkpoint.sh afterAppStart": while running runtime: exit status 74
-```
-
-Run the following command from your terminal window:
-
-```bash
-setsebool virt_sandbox_use_netlink 1
-``` -->
-
-<!-- ### Error when verifying the Knative service is ready
-
-If you run into the following error when verifying the Knative service is ready:
-
-```bash
-oc get knativeserving.operator.knative.dev/knative-serving -n knative-serving --template='{{range .status.conditions}}{{printf "%s=%s\n" .type .status}}{{end}}'
-Error from server (NotFound): knativeservings.operator.knative.dev "knative-serving" not found
-```
-
-```bash
-oc apply -f serving.yaml
-``` -->
 
 ### Error when verifying the OpenShift serverless operator is installed and ready
 
