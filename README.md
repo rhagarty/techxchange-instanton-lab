@@ -346,22 +346,27 @@ If the Knative service has been setup and added to the capability, your output s
 >oc apply -f serving.yaml
 >```
 
-### Edit the Knative permissions to allow to the ability to add Capabilities
+### Verify the Knative containerspec-addcapabilities feature is enabled
 
-```bash
-kubectl -n knative-serving edit cm config-features -oyaml
-```
-
-Add in the following line just bellow the “data” tag at the top:
-```yaml
-kubernetes.containerspec-addcapabilities: enabled
-```
-
-> **IMPORTANT**: to save your change and exit the file, hit the escape key, then type `:x`. If you received the message `Edit cancelled, no changes made`, it may indicate that the Knative service has already been edited and the same changes applied. To confirm whether the `containerspec-addcapabilities` is enabled, you can inspect the current configuration of `config-features` by executing the command 
+To confirm whether the `containerspec-addcapabilities` is enabled, you can inspect the current configuration of `config-features` by executing the command 
 > ```bash 
-> kubectl -n knative-serving get cm config-features -oyaml | grep "kubernetes.containerspec-addcapabilities" | grep -q "enabled" && echo "true" || echo "false"
+> kubectl -n knative-serving get cm config-features -oyaml | grep -c "kubernetes.containerspec-addcapabilities: enabled" && echo "true" || echo 
 > ```
-> If the command returns true, it indicates that the Knative 'containerspec-addcapabilities' feature is enabled.
+
+> **IMPORTANT**: If the command returns true, it indicates that the Knative 'containerspec-addcapabilities' feature is already enabled. Please skip the step regarding editing Knative permissions. However, if it returns false, please proceed with the subsequent step to enable the feature.
+
+>>  ### Edit the Knative permissions to allow to the ability to add Capabilities
+
+>>  ```bash
+>>  kubectl -n knative-serving edit cm config-features -oyaml
+>>  ```
+
+>>  Add in the following line just bellow the “data” tag at the top:
+>>  ```yaml
+>>  kubernetes.containerspec-addcapabilities: enabled
+>>  ```
+
+>> **IMPORTANT**: to save your change and exit the file, hit the escape key, then type `:x`. If you received the message `Edit cancelled, no changes made`, it may indicate that the Knative service has already been edited and the same changes applied. 
 
 ### Run the following commands to give your application the correct Service Account (SA) and Security Context Contraint (SCC) to run instantOn
 
@@ -461,19 +466,6 @@ kubectl delete -f deploy-with-instanton.yaml
   ```bash
   sudo ./build-local-without-instanton.sh
   ```
-
-<!-- ### Error when verifying the Knative service is ready
-
-If you run into the following error when verifying the Knative service is ready:
-
-```bash
-oc get knativeserving.operator.knative.dev/knative-serving -n knative-serving --template='{{range .status.conditions}}{{printf "%s=%s\n" .type .status}}{{end}}'
-Error from server (NotFound): knativeservings.operator.knative.dev "knative-serving" not found
-```
-
-```bash
-oc apply -f serving.yaml
-``` -->
 
 ### Error when verifying the OpenShift serverless operator is installed and ready
 
