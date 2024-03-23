@@ -10,6 +10,8 @@ Note that in many of the commands listed below, we have supplied a file to perfo
 
 This lab requires you start at least one terminal session, and start the Firefox browser.
 
+As part of this lab, the Knative service needs to installed and configured. This will typically be performed by the instructor before the lab and be available for all to use. If you are the instructor, or if you would like to see the steps involved, please refer to the instructions found at https://github.com/rhagarty/techxchange-knative-setup
+
 # Steps:
 
 1. [Initial lab setup](#1-initial-lab-setup)
@@ -305,13 +307,11 @@ curl -L https://raw.githubusercontent.com/OpenLiberty/open-liberty-operator/main
       | kubectl apply -n ${OPERATOR_NAMESPACE} -f -
 ```
 
-### Install the Cert Manager 
+### Verify the installation of the Cert Manager 
 
 The Cert Manager adds certifications and certification issuers as resource types to Kubernetes
 
-```bash
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.12.3/cert-manager.yaml
-```
+<!-- verify the installation using command -->
 
 ### Verify the OpenShift serverless operator is installed and ready
 
@@ -324,12 +324,6 @@ oc get csv
 You should see the following output:
 
 ![ocp-serverless](images/ocp-serverless.png)
-
-> **IMPORTANT**: If the OpenShift serverless operator is not installed, type the following command (note that this command requires the file `serverless-substriction.yaml`, which is provided in this repo):
->
->```bash
->  oc apply -f serverless-subscription.yaml
->```
 
 ### Verify the Knative service is ready
 
@@ -365,15 +359,6 @@ To confirm whether the `containerspec-addcapabilities` is enabled, you can inspe
 
 >> **IMPORTANT**: to save your change and exit the file, hit the escape key, then type `:x`. If you received the message `Edit cancelled, no changes made`, it may indicate that the Knative service has already been edited and the same changes applied. 
 
-
-
-### Run the following commands to give your application the correct Service Account (SA) and Security Context Contraint (SCC) to run instantOn
-
-```bash
-oc create serviceaccount instanton-sa-[Your initial]
-oc apply -f scc-cap-cr.yaml
-oc adm policy add-scc-to-user cap-cr-scc -z instanton-sa-[Your initial]
-```
 
 ## 5. Deploy the applications to OCP
 
