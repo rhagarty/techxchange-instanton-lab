@@ -223,8 +223,12 @@ To stop the running container, press `CTRL+C` in the command-line session where 
 > **NOTE**: If you are working on a cluster that is shared with others, please ensure that you are using a unique namespace. We recommend using the format `dev-` followed by your initials. For example, `dev-rm`.
 
 ```bash
-kubectl create ns dev-[Your initial]
-kubectl config set-context --current --namespace=dev-[Your initial]
+export CURRENT_NS=dev-[Your initial]
+```
+
+```bash
+kubectl create ns $CURRENT_NS
+kubectl config set-context --current --namespace=$CURRENT_NS
 ```
 
 ### Enable the default registry route in OpenShift to push images to its internal repos
@@ -336,6 +340,9 @@ If the Knative service has been setup and added to the capability, your output s
 ![ocp-knative](images/ocp-knative.png)
 
 > **NOTE**: If the output does not match the expected output or if there are any other issues, please contact your instructor.
+>
+> To learning more about setup Knative service please refer to our [knative setup instruction](https://github.com/rhagarty/techxchange-knative-setup)
+
 
 ### Verify the Knative containerspec-addcapabilities feature is enabled
 
@@ -344,23 +351,17 @@ To confirm whether the `containerspec-addcapabilities` is enabled, you can inspe
 > kubectl -n knative-serving get cm config-features -oyaml | grep -c "kubernetes.containerspec-addcapabilities: enabled" && echo "true" || echo "false"
 > ```
 
-> **IMPORTANT**: If the command returns true, it indicates that the Knative 'containerspec-addcapabilities' feature is already enabled. Please skip the step regarding editing Knative permissions. However, if it returns false, please proceed with the subsequent step to enable the feature.
-
->>  ### Edit the Knative permissions to allow to the ability to add Capabilities
-
->>  ```bash
->>  kubectl -n knative-serving edit cm config-features -oyaml
->>  ```
-
->>  Add in the following line just bellow the “data” tag at the top:
->>  ```yaml
->>  kubernetes.containerspec-addcapabilities: enabled
->>  ```
-
->> **IMPORTANT**: to save your change and exit the file, hit the escape key, then type `:x`. If you received the message `Edit cancelled, no changes made`, it may indicate that the Knative service has already been edited and the same changes applied. 
-
+> **IMPORTANT**: If the command returns true, it indicates that the Knative 'containerspec-addcapabilities' feature is already enabled. Please skip the step regarding editing Knative permissions. However, if it returns false, please contact your instructor regarding this.
 
 ## 5. Deploy the applications to OCP
+
+### Update the namespace in the deployment YAML files
+
+> **NOTE**: Execute the following command to activate the script for updating the necessary YAML files with the project namespace you previously set (CURRENT_NS)
+
+```bash
+./searchReplaceNs.sh
+```
 
 ### Deploy the base application
 
