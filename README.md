@@ -10,7 +10,7 @@ Note that in many of the commands listed below, we have supplied a file to perfo
 
 This lab requires you start at least one terminal session, and start the Firefox browser.
 
-As part of this lab, the Knative service needs to installed and configured. This will typically be performed by the instructor before the lab and be available for all to use. If you are the instructor, or if you would like to see the steps involved, please refer to the instructions found at https://github.com/rhagarty/techxchange-knative-setup
+As part of this lab, the Knative service needs to installed and configured. This will typically be performed by the instructor before the lab and be available for all to use. If you are the instructor, or if you would like to see the steps involved, please refer to the [Knative setup instruction](https://github.com/rhagarty/techxchange-knative-setup).
 
 # Steps:
 

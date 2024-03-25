@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Please note if you need to replace any strings other than the default value provided here. You can use ./searchReplaceNs.sh [target string]. 
+# The script will utilize the CURRENTNS value to substitute the target string. For example, running "./searchReplaceNs.sh sccproject-rm" will 
+# replace the sccproject-rm with CURRENTNS value.
+
+
 default_namespace="dev-[Your initial]"
 default_service_acct="instanton-sa-[Your initial]"
 
@@ -24,10 +29,11 @@ fi
 for file in "${selected_files[@]}"; do
     if [ "$old_namespace" == "dev-[Your initial]" ]; then
         sed -i "s/dev-\[Your initial\]/$new_namespace/g" "$file"
+        sed -i "s/instanton-sa-\[Your initial\]/instanton-sa-$new_namespace/g" "$file"
     else 
         sed -i "s/$old_namespace/$new_namespace/g" "$file"
+        sed -i "s/instanton-sa-$old_namespace/instanton-sa-$new_namespace/g" "$file"
     fi
-    sed -i "s/instanton-sa-\[Your initial\]/instanton-sa-$new_namespace/g" "$file"
     
     changes=$((changes + 1))
 done
