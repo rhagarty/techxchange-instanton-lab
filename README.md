@@ -359,14 +359,14 @@ To confirm whether the `containerspec-addcapabilities` is enabled, you can inspe
 > ```
 
 > **IMPORTANT**: If the command returns true, it indicates that the Knative 'containerspec-addcapabilities' feature is already enabled. Please skip the step regarding editing Knative permissions. However, if it returns false, please contact your instructor regarding this. 
-In a production scenario, you may be required to enable 'containerspec-addcapabilities' manually, please refer to our [knative setup instruction](https://github.com/rhagarty/techxchange-knative-setup) for further info. 
+In a production scenario, you may be required to enable `containerspec-addcapabilities` manually, please refer to our [knative setup instruction](https://github.com/rhagarty/techxchange-knative-setup) for further info. 
 
 ### Run the following commands to give applications the correct Service Account (SA) and Security Context Contraint (SCC) to run instantOn
 
 > ```bash 
 > oc create serviceaccount instanton-sa-$CURRENT_NS
 > oc apply -f scc-cap-cr.yaml
-> oc adm policy add-scc-to-user cap-cr-scc -z instanton-sa
+> oc adm policy add-scc-to-user cap-cr-scc -z instanton-sa-$CURRENT_NS
 > ```
 
 ## 5. Deploy the applications to OCP
