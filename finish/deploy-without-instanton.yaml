@@ -6,7 +6,7 @@ metadata:
 spec:
   applicationImage: image-registry.openshift-image-registry.svc:5000/dev-[Your initial]/getting-started:1.0-SNAPSHOT
   pullPolicy: Always
-  serviceAccountName: instanton-sa
+  serviceAccountName: instanton-sa-[Your initial]
   createKnativeService: true
   manageTLS: false
   expose: true

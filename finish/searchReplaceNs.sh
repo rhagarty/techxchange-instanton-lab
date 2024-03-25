@@ -1,6 +1,7 @@
 #!/bin/bash
 
 default_namespace="dev-[Your initial]"
+default_service_acct="instanton-sa-[Your initial]"
 
 if [ "$#" -eq 0 ]; then
     old_namespace=$default_namespace
@@ -26,6 +27,7 @@ for file in "${selected_files[@]}"; do
     else 
         sed -i "s/$old_namespace/$new_namespace/g" "$file"
     fi
+    sed -i "s/instanton-sa-\[Your initial\]/instanton-sa-$new_namespace/g" "$file"
     
     changes=$((changes + 1))
 done

@@ -156,8 +156,6 @@ Note that there are 2 checkpoint options:
 Run the provided script:
 
 ```bash
-setsebool virt_sandbox_use_netlink 1
-
 ./build-local-with-instanton.sh
 ```
 
@@ -294,10 +292,10 @@ oc get imagestream
 
 Perform the following steps to enhance OCP to better manage OCP services, such as Knative, which provides serverless or scale-to-zero functionality. 
 
-The Liberty Operator provides resources and configurations that make it easier to run Open Liberty applications on OCP.
+The Liberty Operator provides resources and configurations that make it easier to run Open Liberty applications on OCP. To verify if the Liberty Operator is available on the server side, please use the following command:
 
 ```bash
-kubectl apply --server-side -f https://raw.githubusercontent.com/OpenLiberty/open-liberty-operator/main/deploy/releases/1.2.1/kubectl/openliberty-app-crd.yaml
+kubectl get crd openlibertyapplications.apps.openliberty.io openlibertydumps.apps.openliberty.io openlibertytraces.apps.openliberty.io
 ```
 
 ### Apply the Liberty Operator to your namespace
@@ -315,7 +313,16 @@ curl -L https://raw.githubusercontent.com/OpenLiberty/open-liberty-operator/main
 
 The Cert Manager adds certifications and certification issuers as resource types to Kubernetes
 
-<!-- verify the installation using command -->
+> **NOTE**: The Cert Manager should have been set up by your instructor. If the output does not match the expected result or if there are any other issues, please contact your instructor.
+
+```bash
+kubectl get deployments -n cert-manager
+```
+
+You should see the following output: 
+
+![verify-cert](images/verify-cert.png)
+
 
 ### Verify the OpenShift serverless operator is installed and ready
 
@@ -351,7 +358,16 @@ To confirm whether the `containerspec-addcapabilities` is enabled, you can inspe
 > kubectl -n knative-serving get cm config-features -oyaml | grep -c "kubernetes.containerspec-addcapabilities: enabled" && echo "true" || echo "false"
 > ```
 
-> **IMPORTANT**: If the command returns true, it indicates that the Knative 'containerspec-addcapabilities' feature is already enabled. Please skip the step regarding editing Knative permissions. However, if it returns false, please contact your instructor regarding this.
+> **IMPORTANT**: If the command returns true, it indicates that the Knative 'containerspec-addcapabilities' feature is already enabled. Please skip the step regarding editing Knative permissions. However, if it returns false, please contact your instructor regarding this. 
+In a production scenario, you may be required to enable 'containerspec-addcapabilities' manually, please refer to our [knative setup instruction](https://github.com/rhagarty/techxchange-knative-setup) for further info. 
+
+### Run the following commands to give applications the correct Service Account (SA) and Security Context Contraint (SCC) to run instantOn
+
+> ```bash 
+> oc create serviceaccount instanton-sa-$CURRENT_NS
+> oc apply -f scc-cap-cr.yaml
+> oc adm policy add-scc-to-user cap-cr-scc -z instanton-sa
+> ```
 
 ## 5. Deploy the applications to OCP
 
