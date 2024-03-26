@@ -5,7 +5,7 @@
 # replace the sccproject-rm with CURRENTNS value.
 
 
-default_namespace="instanton-[Your initial]"
+default_namespace="instantonlab-[Your initial]"
 default_service_acct="instanton-sa-[Your initial]"
 
 if [ "$#" -eq 0 ]; then
@@ -27,8 +27,8 @@ if [[ -z "${new_namespace}" ]]; then
 fi
 
 for file in "${selected_files[@]}"; do
-    if [ "$old_namespace" == "instanton-[Your initial]" ]; then
-        sed -i "s/instanton-\[Your initial\]/$new_namespace/g" "$file"
+    if [ "$old_namespace" == "instantonlab-[Your initial]" ]; then
+        sed -i "s/instantonlab-\[Your initial\]/$new_namespace/g" "$file"
         sed -i "s/instanton-sa-\[Your initial\]/instanton-sa-$new_namespace/g" "$file"
     else 
         sed -i "s/$old_namespace/$new_namespace/g" "$file"

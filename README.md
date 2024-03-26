@@ -221,7 +221,7 @@ To stop the running container, press `CTRL+C` in the command-line session where 
 > **NOTE**: If you are working on a cluster that is shared with others, please ensure that you are using a unique namespace. We recommend using the format `dev-` followed by your initials. For example, `dev-rm`.
 
 ```bash
-export CURRENT_NS=instanton-[Your initial]
+export CURRENT_NS=instantonlab-[Your initial]
 ```
 
 ```bash
@@ -308,8 +308,8 @@ You should see the following output:
 ### Apply the Liberty Operator to your namespace
 
 ```bash
-OPERATOR_NAMESPACE=instanton-[Your initial]
-WATCH_NAMESPACE=instanton-[Your initial]
+OPERATOR_NAMESPACE=instantonlab-[Your initial]
+WATCH_NAMESPACE=instantonlab-[Your initial]
 ##
 curl -L https://raw.githubusercontent.com/OpenLiberty/open-liberty-operator/main/deploy/releases/1.2.0/kubectl/openliberty-app-operator.yaml \
       | sed -e "s/OPEN_LIBERTY_WATCH_NAMESPACE/${WATCH_NAMESPACE}/" \
@@ -485,7 +485,7 @@ If you run into the following error when running `oc get csv `:
 
 ```bash
 oc get csv
-No resources found in instanton-[your initial] namespace.
+No resources found in instantonlab-[your initial] namespace.
 ```
 
 Please wait a few more minutes and then try again. It should return the correct output.
