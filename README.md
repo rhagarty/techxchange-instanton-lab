@@ -220,7 +220,7 @@ To stop the running container, press `CTRL+C` in the command-line session where 
 
 ### Create the namespace and set it as the default
 
-> **NOTE**: If you are working on a cluster that is shared with others, please ensure that you are using a unique namespace. We recommend using the format `dev-` followed by your initials. For example, `dev-rm`.
+> **NOTE**: If you are working on a cluster that is shared with others, please ensure that you are using a unique namespace. We recommend using the format `instantonlab-` followed by your initials. For example, `instantonlab-rm`.
 
 ```bash
 export CURRENT_NS=instantonlab-[Your initial]
