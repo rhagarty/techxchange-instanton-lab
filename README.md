@@ -156,6 +156,8 @@ Note that there are 2 checkpoint options:
 Run the provided script:
 
 ```bash
+setsebool virt_sandbox_use_netlink 1
+
 ./build-local-with-instanton.sh
 ```
 
