@@ -231,13 +231,15 @@ kubectl config set-context --current --namespace=$CURRENT_NS
 
 ### Enable the default registry route in OpenShift to push images to its internal repos
 
+> **NOTE**: You will not need to perform this step if you completed the Semeru Cloud Compiler lab.
+
 ```bash
 oc patch configs.imageregistry.operator.openshift.io/cluster --patch '{"spec":{"defaultRoute":true}}' --type=merge
 ```
 
 ### Log Podman into the OpenShift registry server [IF NEEDED]
 
-> **NOTE**: You will not need to perform this step if you completed the Semeru Cloud Compiler lab.
+> **NOTE**: You will not need to perform the following steps if you completed the Semeru Cloud Compiler lab.
 
 First we need to get the `TOKEN` that we can use to get the password for the registry.
 
@@ -276,7 +278,8 @@ Now tag and push them to the OpenShift registry:
 # base application image
 podman tag dev.local/getting-started:latest $(oc registry info)/$(oc project -q)/getting-started:1.0-SNAPSHOT
 podman push $(oc registry info)/$(oc project -q)/getting-started:1.0-SNAPSHOT --tls-verify=false
-
+```
+```bash
 # InstantOn application image
 podman tag dev.local/getting-started-instanton:latest $(oc registry info)/$(oc project -q)/getting-started-instanton:1.0-SNAPSHOT
 podman push $(oc registry info)/$(oc project -q)/getting-started-instanton:1.0-SNAPSHOT --tls-verify=false
@@ -297,6 +300,10 @@ The Liberty Operator provides resources and configurations that make it easier t
 ```bash
 kubectl get crd openlibertyapplications.apps.openliberty.io openlibertydumps.apps.openliberty.io openlibertytraces.apps.openliberty.io
 ```
+
+You should see the following output: 
+
+![verify-liberty-operator](images/verify-liberty-operator.png)
 
 ### Apply the Liberty Operator to your namespace
 
