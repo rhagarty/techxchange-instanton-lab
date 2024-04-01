@@ -310,8 +310,8 @@ You should see the following output:
 ### Apply the Liberty Operator to your namespace
 
 ```bash
-OPERATOR_NAMESPACE=instantonlab-[Your initial]
-WATCH_NAMESPACE=instantonlab-[Your initial]
+OPERATOR_NAMESPACE=$CURRENT_NS
+WATCH_NAMESPACE=$CURRENT_NS
 ##
 curl -L https://raw.githubusercontent.com/OpenLiberty/open-liberty-operator/main/deploy/releases/1.2.0/kubectl/openliberty-app-operator.yaml \
       | sed -e "s/OPEN_LIBERTY_WATCH_NAMESPACE/${WATCH_NAMESPACE}/" \
