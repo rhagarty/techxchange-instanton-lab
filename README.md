@@ -45,7 +45,7 @@ Use the password specified in the InstantOn lab description.
 ### Clone the application from GitHub
 
 ```bash
-cd /home/techzone/Lab-InstantOn
+cd /home/ibmuser/Lab-InstantOn
 git clone https://github.com/rhagarty/techxchange-instanton-lab.git
 cd techxchange-instanton-lab/finish
 ```
@@ -311,8 +311,11 @@ You should see the following output:
 
 ```bash
 OPERATOR_NAMESPACE=instantonlab-[Your initial]
+```
+```bash
 WATCH_NAMESPACE=instantonlab-[Your initial]
-##
+```
+```bash
 curl -L https://raw.githubusercontent.com/OpenLiberty/open-liberty-operator/main/deploy/releases/1.2.0/kubectl/openliberty-app-operator.yaml \
       | sed -e "s/OPEN_LIBERTY_WATCH_NAMESPACE/${WATCH_NAMESPACE}/" \
       | kubectl apply -n ${OPERATOR_NAMESPACE} -f -
